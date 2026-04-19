@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmGifts | Private Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b1120;
+            --card: #161f33;
+            --accent: #ff4757;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        /* LOGIN OVERLAY */
+        #loginOverlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--bg);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-box {
+            background: var(--card);
+            padding: 40px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 360px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .login-box h2 {
+            margin: 0 0 20px 0;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #0b1120;
+            color: white;
+            font-family: inherit;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .login-btn:active { transform: scale(0.98); }
+
+        #loginError {
+            color: var(--accent);
+            font-size: 0.85rem;
+            margin-top: 15px;
+            display: none;
+            font-weight: 600;
+        }
+
+        /* MAIN CONTENT */
+        #mainContent {
+            display: none;
+            width: 100%;
+            max-width: 600px;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-weight: 800;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .search-container {
+            position: sticky;
+            top: 20px;
+            z-index: 10;
+            margin-bottom: 30px;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 18px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--card);
+            color: white;
+            font-size: 1rem;
+            font-family: inherit;
+            box-sizing: border-box;
+            outline: none;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .item-card {
+            background: var(--card);
+            padding: 18px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: border-color 0.3s;
+        }
+
+        .item-card:hover {
+            border-color: rgba(255, 71, 87, 0.4);
+        }
+
+        .item-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        .item-link-btn {
+            background: rgba(255, 71, 87, 0.1);
+            color: var(--accent);
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 1px solid rgba(255, 71, 87, 0.2);
+            transition: all 0.2s;
+        }
+
+        .item-link-btn:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        #emptyState {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loginOverlay">
+        <div class="login-box">
+            <h2>Admin Access</h2>
+            <input type="text" id="userField" placeholder="Username" spellcheck="false">
+            <input type="password" id="passField" placeholder="Password">
+            <button class="login-btn" onclick="checkLogin()">Login</button>
+            <p id="loginError">Incorrect credentials.</p>
+        </div>
+    </div>
+
+    <div id="mainContent">
+        <header>
+            <h1>Private Inventory</h1>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">OmGifts.bn Internal Links</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search items..." onkeyup="filterItems()">
+        </div>
+
+        <div class="item-list" id="itemList">
+            <div id="emptyState">Loading inventory data...</div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURATION
+        const AUTH_USER = "admin";
+        const AUTH_PASS = "12333@@@@";
+        // REPLACE THE URL BELOW WITH YOUR PUBLISHED GOOGLE SHEET CSV LINK
+        const CSV_URL = 'PASTE_YOUR_CSV_URL_HERE'; 
+        
+        let inventory = [];
+
+        function checkLogin() {
+            const u = document.getElementById('userField').value;
+            const p = document.getElementById('passField').value;
+
+            if (u === AUTH_USER && p === AUTH_PASS) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                loadInventory();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        // Allow pressing "Enter" to login
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && document.getElementById('loginOverlay').style.display !== 'none') {
+                checkLogin();
+            }
+        });
+
+        async function loadInventory() {
+            try {
+                const response = await fetch(CSV_URL);
+                const data = await response.text();
+                
+                // Parse CSV rows
+                const rows = data.split(/\r?\n/).filter(row => row.trim() !== "").slice(1);
+                
+                inventory = rows.map(row => {
+                    // Split by comma but respect quotes
+                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    return { 
+                        name: cols[0]?.replace(/^"|"$/g, "").trim(), 
+                        link: cols[1]?.replace(/^"|"$/g, "").trim() 
+                    };
+                }).filter(item => item.name && item.link);
+                
+                renderItems(inventory);
+            } catch (err) {
+                document.getElementById('itemList').innerHTML = `
+                    <div id="emptyState">
+                        <p style="color: var(--accent)">Error loading CSV data.</p>
+                        <p style="font-size: 0.8rem">Make sure you published the correct tab to the web as CSV.</p>
+                    </div>`;
+            }
+        }
+
+        function renderItems(data) {
+            const list = document.getElementById('itemList');
+            
+            if (data.length === 0) {
+                list.innerHTML = '<div id="emptyState">No items found.</div>';
+                return;
+            }
+
+            list.innerHTML = data.map(item => `
+                <div class="item-card">
+                    <div class="item-info">
+                        <span class="item-name">${item.name}</span>
+                    </div>
+                    <a href="${item.link}" target="_blank" class="item-link-btn">View Item</a>
+                </div>
+            `).join('');
+        }
+
+        function filterItems() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = inventory.filter(i => i.name.toLowerCase().includes(query));
+            renderItems(filtered);
+        }
+    </script>
+</body>
+</html>
