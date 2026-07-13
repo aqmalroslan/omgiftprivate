@@ -43,7 +43,7 @@
         }
         .error-msg { color: #e74c3c; font-size: 13px; margin-top: 10px; display: none; }
 
-        /* Main App Screen (Hidden by default) */
+        /* Main App Screen */
         #app-content { display: none; }
 
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -136,7 +136,7 @@
             if (enteredPin === "1509") {
                 document.getElementById('lock-screen').style.display = 'none';
                 document.getElementById('app-content').style.display = 'block';
-                fetchGoals(); // Initialize fetching data after unlock
+                fetchGoals(); 
             } else {
                 errorElement.style.display = 'block';
                 document.getElementById('pin-field').value = '';
@@ -169,9 +169,9 @@
 
         // Add a new goal to the Cloud Database
         async function addNewGoal() {
-            const name = prompt("Enter Goal Name:", "Ayu birthday funds 💵");
+            const name = prompt("Enter Goal Name:");
             if (!name) return;
-            const target = parseFloat(prompt("Enter Target Amount ($):", "1500.00"));
+            const target = parseFloat(prompt("Enter Target Amount ($):"));
             if (!target || target <= 0) return;
 
             const newGoal = {
@@ -181,26 +181,24 @@
                 target: target
             };
 
-            // Optimistic rendering: push to screen instantly, then update backend smoothly
             goals.push(newGoal);
             render();
 
             const { error } = await _supabase.from('savings_goals').insert([newGoal]);
             if (error) {
                 alert("Failed to save to cloud.");
-                fetchGoals(); // Rollback if error happens
+                fetchGoals(); 
             }
         }
 
         // Add money to a goal in the Cloud Database
         async function addFunds(id) {
             const goal = goals.find(g => g.id === id);
-            const val = parseFloat(prompt(`Add funds to ${goal.name}:`, "40.00"));
+            const val = parseFloat(prompt(`Add funds to ${goal.name}:`));
             if (!val || val <= 0) return;
 
             const updatedCurrent = Math.min(goal.target, goal.current + val);
 
-            // Instant Interface Render
             goal.current = updatedCurrent;
             render();
 
@@ -211,14 +209,13 @@
 
             if (error) {
                 alert("Failed to update cloud data.");
-                fetchGoals(); // Rollback if network error occurs
+                fetchGoals(); 
             }
         }
 
         // Delete a goal from the Cloud Database
         async function deleteGoal(id) {
             if (confirm("Delete this goal permanently from the cloud?")) {
-                // Instant Interface Render
                 goals = goals.filter(g => g.id !== id);
                 render();
 
