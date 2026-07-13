@@ -3,294 +3,557 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmGifts | Private Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Cookie Jar - Multi-Goal Savings Tracker</title>
     <style>
         :root {
-            --bg: #0b1120;
-            --card: #161f33;
-            --accent: #ff4757;
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-green: #2ecc71;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --border-color: #2d2d2d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 20px;
+            max-width: 480px;
+            margin: 0 auto;
+            padding-bottom: 80px;
         }
 
-        /* LOGIN OVERLAY */
-        #loginOverlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: var(--bg);
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .login-box {
-            background: var(--card);
-            padding: 40px;
-            border-radius: 24px;
-            width: 90%;
-            max-width: 360px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-
-        .login-box h2 {
-            margin: 0 0 20px 0;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .login-box input {
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 12px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: #0b1120;
-            color: white;
-            font-family: inherit;
-            box-sizing: border-box;
-            outline: none;
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 14px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .login-btn:active { transform: scale(0.98); }
-
-        #loginError {
-            color: var(--accent);
-            font-size: 0.85rem;
-            margin-top: 15px;
-            display: none;
-            font-weight: 600;
-        }
-
-        /* MAIN CONTENT */
-        #mainContent {
-            display: none;
-            width: 100%;
-            max-width: 600px;
-            padding: 40px 20px;
-        }
-
+        /* Header */
         header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        header h1 {
-            font-weight: 800;
-            font-size: 1.8rem;
-            margin: 0;
-        }
-
-        .search-container {
-            position: sticky;
-            top: 20px;
-            z-index: 10;
-            margin-bottom: 30px;
-        }
-
-        #searchInput {
-            width: 100%;
-            padding: 18px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: var(--card);
-            color: white;
-            font-size: 1rem;
-            font-family: inherit;
-            box-sizing: border-box;
-            outline: none;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        .item-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .item-card {
-            background: var(--card);
-            padding: 18px;
-            border-radius: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: border-color 0.3s;
+            margin-bottom: 20px;
+            margin-top: 10px;
         }
 
-        .item-card:hover {
-            border-color: rgba(255, 71, 87, 0.4);
+        header h1 {
+            font-size: 28px;
+            font-weight: 700;
         }
 
-        .item-info {
+        header p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .add-goal-btn {
+            background-color: var(--primary-green);
+            color: var(--bg-color);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Overview Card */
+        .overview-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .overview-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .total-label {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .total-amount {
+            color: var(--primary-green);
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .total-target {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 2px;
+        }
+
+        /* Circular Progress */
+        .progress-circle-container {
+            position: relative;
+            width: 70px;
+            height: 70px;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring__circle {
+            stroke-dasharray: 220;
+            stroke-dashoffset: 220;
+            transition: stroke-dashoffset 0.35s;
+            transform-origin: 50% 50%;
+        }
+
+        .percentage-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--primary-green);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .stat-item p {
+            color: var(--text-muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-divider {
+            border-right: 1px solid var(--border-color);
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        /* Goal List & Cards */
+        .goal-list {
             display: flex;
             flex-direction: column;
+            gap: 15px;
         }
 
-        .item-name {
+        .goal-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            position: relative;
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .goal-info-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .goal-icon {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--primary-green);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .goal-name {
+            font-size: 16px;
             font-weight: 600;
-            font-size: 1rem;
-            color: #fff;
+            margin-bottom: 2px;
         }
 
-        .item-link-btn {
-            background: rgba(255, 71, 87, 0.1);
-            color: var(--accent);
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            border: 1px solid rgba(255, 71, 87, 0.2);
-            transition: all 0.2s;
+        .goal-amounts {
+            font-size: 13px;
         }
 
-        .item-link-btn:hover {
-            background: var(--accent);
-            color: white;
+        .current-saved {
+            color: var(--primary-green);
+            font-weight: 600;
         }
 
-        #emptyState {
-            text-align: center;
+        .target-saved {
             color: var(--text-muted);
-            padding: 40px;
         }
+
+        .left-to-go {
+            color: var(--text-muted);
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        .goal-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn {
+            background-color: var(--primary-green);
+            color: var(--bg-color);
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            font-size: 12px;
+        }
+
+        /* Linear Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            background-color: var(--border-color);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--primary-green);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Modal / Dialog Form */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 360px;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-cancel { background-color: var(--border-color); color: white; }
+        .btn-submit { background-color: var(--primary-green); color: var(--bg-color); }
     </style>
 </head>
 <body>
 
-    <div id="loginOverlay">
-        <div class="login-box">
-            <h2>Admin Access</h2>
-            <input type="text" id="userField" placeholder="Username" spellcheck="false">
-            <input type="password" id="passField" placeholder="Password">
-            <button class="login-btn" onclick="checkLogin()">Login</button>
-            <p id="loginError">Incorrect credentials.</p>
+    <!-- Header -->
+    <header>
+        <div>
+            <h1>Cookie Jar</h1>
+            <p>Total Saved</p>
+        </div>
+        <button class="add-goal-btn" onclick="openModal('addGoalModal')">+</button>
+    </header>
+
+    <!-- Overview Card -->
+    <div class="overview-card">
+        <div class="overview-main">
+            <div>
+                <div class="total-label">Total Saved</div>
+                <div class="total-amount" id="grand-total">$0.00</div>
+                <div class="total-target" id="grand-target">of $0.00</div>
+            </div>
+            <div class="progress-circle-container">
+                <svg class="progress-ring" width="70" height="70">
+                    <circle class="progress-ring__circle" stroke="#2d2d2d" stroke-width="6" fill="transparent" r="30" cx="35" cy="35"/>
+                    <circle id="global-circle-fill" class="progress-ring__circle" stroke="#2ecc71" stroke-width="6" fill="transparent" r="30" cx="35" cy="35" stroke-linecap="round"/>
+                </svg>
+                <div class="percentage-text" id="global-percentage">0%</div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-item stats-divider">
+                <h3 id="stat-goals">0</h3>
+                <p>Goals</p>
+            </div>
+            <div class="stat-item stats-divider">
+                <h3 id="stat-completed">0</h3>
+                <p>Completed</p>
+            </div>
+            <div class="stat-item">
+                <h3 id="stat-active">0</h3>
+                <p>Active</p>
+            </div>
         </div>
     </div>
 
-    <div id="mainContent">
-        <header>
-            <h1>Private Inventory</h1>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">OmGifts.bn Internal Links</p>
-        </header>
+    <!-- Active Goals -->
+    <div class="section-title">Active Goals</div>
+    <div class="goal-list" id="goal-container">
+        <!-- Dynamic target insertion point -->
+    </div>
 
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search items..." onkeyup="filterItems()">
+    <!-- Add Goal Modal -->
+    <div class="modal" id="addGoalModal">
+        <div class="modal-content">
+            <h3>New Savings Goal</h3>
+            <div class="form-group">
+                <label>Goal Name</label>
+                <input type="text" id="new-goal-name" placeholder="e.g., Ayu birthday funds 💵">
+            </div>
+            <div class="form-group">
+                <label>Target Amount ($)</label>
+                <input type="number" id="new-goal-target" step="0.01" placeholder="1500.00">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeModal('addGoalModal')">Cancel</button>
+                <button class="btn btn-submit" onclick="addNewGoal()">Create</button>
+            </div>
         </div>
+    </div>
 
-        <div class="item-list" id="itemList">
-            <div id="emptyState">Loading inventory data...</div>
+    <!-- Add/Subtract Funds Modal -->
+    <div class="modal" id="fundModal">
+        <div class="modal-content">
+            <h3 id="fund-modal-title">Update Funds</h3>
+            <div class="form-group">
+                <label>Amount ($)</label>
+                <input type="number" id="fund-amount" step="0.01" placeholder="0.00">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeModal('fundModal')">Cancel</button>
+                <button class="btn btn-submit" id="fund-submit-btn">Apply</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // CONFIGURATION
-        const AUTH_USER = "admin";
-        const AUTH_PASS = "12333@@@@";
-        // REPLACE THE URL BELOW WITH YOUR PUBLISHED GOOGLE SHEET CSV LINK
-        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSK9Lkzw1PAanEKS2WgjVQy2tW16VmOIaJcdKJuvrjbDlCoWiqvMVgis-VzsgfvKaMjoV7BIjHysMS-/pub?gid=0&single=true&output=csv'; 
-        
-        let inventory = [];
+        // State Management loaded from LocalStorage
+        let goals = JSON.parse(localStorage.getItem('cookie_jar_goals')) || [];
+        let activeGoalIdForFunding = null;
 
-        function checkLogin() {
-            const u = document.getElementById('userField').value;
-            const p = document.getElementById('passField').value;
-
-            if (u === AUTH_USER && p === AUTH_PASS) {
-                document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-                loadInventory();
-            } else {
-                document.getElementById('loginError').style.display = 'block';
-            }
+        // Save state helper
+        function saveState() {
+            localStorage.setItem('cookie_jar_goals', JSON.stringify(goals));
+            render();
         }
 
-        // Allow pressing "Enter" to login
-        document.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && document.getElementById('loginOverlay').style.display !== 'none') {
-                checkLogin();
-            }
-        });
+        // Modal triggers
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        async function loadInventory() {
-            try {
-                const response = await fetch(CSV_URL);
-                const data = await response.text();
-                
-                // Parse CSV rows
-                const rows = data.split(/\r?\n/).filter(row => row.trim() !== "").slice(1);
-                
-                inventory = rows.map(row => {
-                    // Split by comma but respect quotes
-                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    return { 
-                        name: cols[0]?.replace(/^"|"$/g, "").trim(), 
-                        link: cols[1]?.replace(/^"|"$/g, "").trim() 
-                    };
-                }).filter(item => item.name && item.link);
-                
-                renderItems(inventory);
-            } catch (err) {
-                document.getElementById('itemList').innerHTML = `
-                    <div id="emptyState">
-                        <p style="color: var(--accent)">Error loading CSV data.</p>
-                        <p style="font-size: 0.8rem">Make sure you published the correct tab to the web as CSV.</p>
-                    </div>`;
-            }
-        }
-
-        function renderItems(data) {
-            const list = document.getElementById('itemList');
+        // Core business logic updates
+        function addNewGoal() {
+            const name = document.getElementById('new-goal-name').value.trim() || "Untitled Goal";
+            const target = parseFloat(document.getElementById('new-goal-target').value) || 0;
             
-            if (data.length === 0) {
-                list.innerHTML = '<div id="emptyState">No items found.</div>';
-                return;
+            if(target <= 0) return alert("Please enter a valid target amount.");
+
+            goals.push({
+                id: Date.now(),
+                name: name,
+                current: 0,
+                target: target
+            });
+
+            document.getElementById('new-goal-name').value = '';
+            document.getElementById('new-goal-target').value = '';
+            closeModal('addGoalModal');
+            saveState();
+        }
+
+        function openFundModal(id) {
+            activeGoalIdForFunding = id;
+            const goal = goals.find(g => g.id === id);
+            document.getElementById('fund-modal-title').innerText = `Add Funds to: ${goal.name}`;
+            document.getElementById('fund-amount').value = '';
+            
+            document.getElementById('fund-submit-btn').onclick = function() {
+                const val = parseFloat(document.getElementById('fund-amount').value) || 0;
+                if(val > 0) {
+                    goal.current = Math.min(goal.target, goal.current + val);
+                    closeModal('fundModal');
+                    saveState();
+                }
+            };
+            openModal('fundModal');
+        }
+
+        function deleteGoal(id) {
+            if(confirm("Delete this savings goal?")) {
+                goals = goals.filter(g => g.id !== id);
+                saveState();
             }
+        }
 
-            list.innerHTML = data.map(item => `
-                <div class="item-card">
-                    <div class="item-info">
-                        <span class="item-name">${item.name}</span>
+        // Calculations & DOM Manipulation
+        function render() {
+            const container = document.getElementById('goal-container');
+            container.innerHTML = '';
+
+            let grandTotal = 0;
+            let grandTarget = 0;
+            let completedCount = 0;
+            let activeCount = 0;
+
+            goals.forEach(goal => {
+                grandTotal += goal.current;
+                grandTarget += goal.target;
+                
+                const isCompleted = goal.current >= goal.target;
+                if(isCompleted) completedCount++; else activeCount++;
+
+                const percent = Math.min(100, Math.round((goal.current / goal.target) * 100)) || 0;
+                const leftToGo = Math.max(0, goal.target - goal.current);
+
+                // Goal Card generation template matching UI
+                const goalCard = document.createElement('div');
+                goalCard.className = 'goal-card';
+                goalCard.innerHTML = `
+                    <div class="goal-header">
+                        <div class="goal-info-left">
+                            <div class="goal-icon">🚗</div>
+                            <div>
+                                <div class="goal-name">${goal.name}</div>
+                                <div class="goal-amounts">
+                                    <span class="current-saved">$${goal.current.toFixed(2)}</span>
+                                    <span class="target-saved"> / $${goal.target.toFixed(2)}</span>
+                                </div>
+                                <div class="left-to-go">$${leftToGo.toFixed(2)} left to go!</div>
+                            </div>
+                        </div>
+                        <div class="goal-actions">
+                            <div class="progress-circle-container" style="width:40px; height:40px; margin-right: 5px;">
+                                <svg width="40" height="40" class="progress-ring">
+                                    <circle stroke="#2d2d2d" stroke-width="3" fill="transparent" r="16" cx="20" cy="20"/>
+                                    <circle stroke="#2ecc71" stroke-width="3" fill="transparent" r="16" cx="20" cy="20" 
+                                        stroke-dasharray="100" stroke-dashoffset="${100 - percent}" stroke-linecap="round"/>
+                                </svg>
+                                <div class="percentage-text" style="font-size: 9px;">${percent}%</div>
+                            </div>
+                            <button class="action-btn" onclick="openFundModal(${goal.id})">+</button>
+                            <button class="action-btn delete-btn" onclick="deleteGoal(${goal.id})">×</button>
+                        </div>
                     </div>
-                    <a href="${item.link}" target="_blank" class="item-link-btn">View Item</a>
-                </div>
-            `).join('');
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: ${percent}%"></div>
+                    </div>
+                `;
+                container.appendChild(goalCard);
+            });
+
+            // Update Top Global Summary
+            document.getElementById('grand-total').innerText = `$${grandTotal.toFixed(2)}`;
+            document.getElementById('grand-target').innerText = `of $${grandTarget.toFixed(2)}`;
+            
+            const globalPercent = Math.min(100, Math.round((grandTotal / (grandTarget || 1)) * 100)) || 0;
+            document.getElementById('global-percentage').innerText = `${globalPercent}%`;
+            
+            // Handle global circular progress mapping
+            const circumference = 2 * Math.PI * 30; // r=30
+            const offset = circumference - (globalPercent / 100) * circumference;
+            document.getElementById('global-circle-fill').style.strokeDasharray = circumference;
+            document.getElementById('global-circle-fill').style.strokeDashoffset = offset;
+
+            // Stats items Update
+            document.getElementById('stat-goals').innerText = goals.length;
+            document.getElementById('stat-completed').innerText = completedCount;
+            document.getElementById('stat-active').innerText = activeCount;
         }
 
-        function filterItems() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = inventory.filter(i => i.name.toLowerCase().includes(query));
-            renderItems(filtered);
-        }
+        // Initialize App on structural run
+        render();
     </script>
 </body>
 </html>
